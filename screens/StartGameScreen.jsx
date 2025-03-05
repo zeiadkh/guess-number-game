@@ -1,7 +1,8 @@
 import { View, TextInput, StyleSheet, Alert } from "react-native";
 import PrimaryButton from "../components/PrimaryButton";
 import { useState } from "react";
-function StartGameScreen() {
+import Colors from "../constants/colors";
+function StartGameScreen({ onPickNumber }) {
   const [enteredNumber, setEnteredNumber] = useState("");
   function numberInputHandler(enteredText) {
     setEnteredNumber(enteredText);
@@ -10,7 +11,6 @@ function StartGameScreen() {
     setEnteredNumber("");
   }
   function confimrInputHandler() {
-    console.log("chosen number", enteredNumber);
     const chosenNumber = parseInt(enteredNumber);
     if (isNaN(chosenNumber) || chosenNumber <= 0 || chosenNumber > 99) {
       Alert.alert(
@@ -20,7 +20,7 @@ function StartGameScreen() {
       );
       return;
     }
-    console.log("valid number")
+    onPickNumber(chosenNumber);
   }
   return (
     <View style={styles.inputContainer}>
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginTop: 100,
     marginHorizontal: 42,
-    backgroundColor: "#3b021f",
+    backgroundColor: Colors.primary800,
     borderRadius: 8,
     elevation: 16,
     shadowColor: "#black",
@@ -62,9 +62,9 @@ const styles = StyleSheet.create({
   numberInput: {
     height: 60,
     fontSize: 32,
-    borderBottomColor: "#ddb52f",
+    borderBottomColor: Colors.accent500,
     borderBottomWidth: 2,
-    color: "#ddb52f",
+    color: Colors.accent500,
     marginVertical: 8,
     fontWeight: "bold",
     width: 50,
