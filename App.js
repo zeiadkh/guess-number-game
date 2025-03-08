@@ -10,27 +10,43 @@ import AppLoading from "expo-app-loading";
 export default function App() {
   const [userNumber, setUserNumber] = useState(null);
   const [gameOver, setGameOver] = useState(true);
+  const [guessRounds, setGuessRounds] = useState(0);
+
   const [fontsLoaded] = useFonts({
     "open-sans": require("./assets/fonts/OpenSans-Regular.ttf"),
     "open-sans-bold": require("./assets/fonts/OpenSans-Bold.ttf"),
-  })
-  if(!fontsLoaded) {
-    return <AppLoading />
+  });
+  if (!fontsLoaded) {
+    return <AppLoading />;
   }
-  function gameOverHandler(){
+  function gameOverHandler(numberOfRounds) {
     setGameOver(true);
+    setGuessRounds(numberOfRounds);
   }
-  
+
+  function startNewGameHandler() {
+    setGuessRounds(0);
+    setUserNumber(null);
+  }
+
   function pickedNumberHandler(pickedNumber) {
     setUserNumber(pickedNumber);
     setGameOver(false);
   }
   let screen = <StartGameScreen onPickNumber={pickedNumberHandler} />;
   if (userNumber) {
-    screen = <GameScreen userNumber={userNumber} onGameOver={gameOverHandler} />;
+    screen = (
+      <GameScreen userNumber={userNumber} onGameOver={gameOverHandler} />
+    );
   }
-  if(userNumber && gameOver) {
-    screen = <GameOverScreen />
+  if (userNumber && gameOver) {
+    screen = (
+      <GameOverScreen
+        userNumber={userNumber}
+        onStartNewGame={startNewGameHandler}
+        roundsNumber={guessRounds}
+      />
+    );
   }
   return (
     <LinearGradient
