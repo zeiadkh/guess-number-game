@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet, Alert, FlatList, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Alert,
+  FlatList,
+  useWindowDimensions,
+  ScrollView,
+} from "react-native";
 import Title from "../components/ui/Title";
 import NumberContainer from "../components/game/NumberContainer";
 import PrimaryButton from "../components/ui/PrimaryButton";
@@ -22,7 +29,7 @@ let maxBoundary = 100;
 
 export default function GameScreen({ userNumber, onGameOver }) {
   const intialGuess = generateRandonBetween(1, 100, userNumber);
-
+  const { width, height } = useWindowDimensions();
   const [currentGuess, setCurrentGuess] = useState(intialGuess);
   const [guessRounds, setGuessRounds] = useState([intialGuess]);
 
@@ -60,36 +67,66 @@ export default function GameScreen({ userNumber, onGameOver }) {
     minBoundary = 1;
     maxBoundary = 100;
   }, []);
-  return (
-    <View style={styles.screen}>
-      <Title>Opponent's Guess</Title>
-      <NumberContainer>{currentGuess}</NumberContainer>
-      <Card>
-        <InstructionText style={styles.instructionText}>
-          Higer or lower?
-        </InstructionText>
-        <View style={styles.buttonsContainer}>
-          <View style={styles.buttonContainer}>
-            <PrimaryButton onPress={nextGuessHandler.bind(this, "higher")}>
-              <Ionicons name="add" size={26} color="white" />
-            </PrimaryButton>
-          </View>
+
+  const content =
+    width > 400 ? (
+      <>
+        {/* <ScrollView > */}
+          
+          <View style={styles.buttonsContainerWide}>
           <View style={styles.buttonContainer}>
             <PrimaryButton onPress={nextGuessHandler.bind(this, "lower")}>
               <Ionicons name="remove" size={26} color="white" />
             </PrimaryButton>
           </View>
-        </View>
-       
-        
-      </Card>
-          <View style={styles.listContainer}>
-          <FlatList
-            data={guessRounds}
-            renderItem={({item}) => <GuessLogItem guess={item} roundNumber={guessRounds.length - guessRounds.indexOf(item)} />}
-            keyExtractor={item => item}
-          />
+          <NumberContainer>{currentGuess}</NumberContainer>
+          <View style={styles.buttonContainer}>
+            <PrimaryButton onPress={nextGuessHandler.bind(this, "higher")}>
+              <Ionicons name="add" size={26} color="white" />
+            </PrimaryButton>
           </View>
+          </View>
+        {/* </ScrollView> */}
+      </>
+    ) : (
+      <>
+        <NumberContainer>{currentGuess}</NumberContainer>
+        <Card>
+          <InstructionText style={styles.instructionText}>
+            Higer or lower?
+          </InstructionText>
+          <View style={styles.buttonsContainer}>
+            <View style={styles.buttonContainer}>
+              <PrimaryButton onPress={nextGuessHandler.bind(this, "higher")}>
+                <Ionicons name="add" size={26} color="white" />
+              </PrimaryButton>
+            </View>
+            <View style={styles.buttonContainer}>
+              <PrimaryButton onPress={nextGuessHandler.bind(this, "lower")}>
+                <Ionicons name="remove" size={26} color="white" />
+              </PrimaryButton>
+            </View>
+          </View>
+        </Card>
+      </>
+    );
+
+  return (
+    <View style={styles.screen}>
+      <Title>Opponent's Guess</Title>
+      {content}
+      <View style={styles.listContainer}>
+        <FlatList
+          data={guessRounds}
+          renderItem={({ item }) => (
+            <GuessLogItem
+              guess={item}
+              roundNumber={guessRounds.length - guessRounds.indexOf(item)}
+            />
+          )}
+          keyExtractor={(item) => item}
+        />
+      </View>
     </View>
   );
 }
@@ -98,6 +135,7 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     padding: 24,
+    alignItems: "center",
   },
   instructionText: {
     marginBottom: 24,
@@ -108,8 +146,12 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
   },
+  buttonsContainerWide: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   listContainer: {
     flex: 1,
-    padding: 16
-  }
+    padding: 16,
+  },
 });
